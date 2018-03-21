@@ -1,4 +1,4 @@
-# fp_system
+# 记账系统
 
 > web前端技术栈 vue,vuex,vue-router,axios
 > 后端 node koa2  ,  koa-router , mysql  ,sequelize('查询器')
