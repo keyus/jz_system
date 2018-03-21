@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .wrapper{
+            height: 200px;
+            width: 72px;
+            background: #eee;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -36px;
+            margin-top: -100px;
+            overflow: visible;
+        }
+        .scroll {
+            transform: translate3d(0px, -310px, 0px);
+        }
+        .scroll div{
+            transform-style: preserve-3d;
+            height: 36px;
+            line-height: 36px;
+            padding: 0 10px;
+            transform-origin: center center -110px;
+        }
+        .d3{
+            transform-style: preserve-3d;
+        }
+    </style>
+</head>
+<body>
+    <!--2012,3 - 2015,3   中青旅-->
+    <!--做公司旅游网站开发，后台网站开发；-->
+    <!--前面1年负责网站交互设计、网站前端界面实现；与公司产品交涉、与产品讨论及分析需求、流程、可行性评估等。解决浏览器兼容IE6-9,chrome,fixefox,自学php.thinkphp-->
+    <!--后面，主攻前端-->
+    <!--公司技术使用jquery,zepot, backbone.,underscore.angular1-->
+
+    <!--2015,4 - 2017,6   Lowe Profero睿狮博斐-->
+    <!--根据提供的设计和功能规范构建前端项目,主要负责millenniumhotels(千喜酒店),半岛酒店网站的前端开发-->
+    <!--公司技术使用 vue,angular,react.-->
+
+    <!--2017,8 - 2018,1   华云合创-->
+    <!--负责公司合创圈轻应用组件的开发，PC端，与移动端。 以及负责开发公司自己的vue UI组件库，(参考Element ui)-->
+    <!--技术栈 vue,vue-router,vuex.   以及react开发的轻应用-->
+
+    <!--语言：html(5) css(3) javascript  php mysql-->
+    <!--思想：w3c标准  语义化  组件化开发  响应式移动端-->
+    <!--框架：jquery  vue  react  angular  typescript(基本了解)-->
+    <!--其它：Node koa2 express Git  SVN  linux  Apache  Photoshop(熟练)-->
+    <!--友好,高成长,关注前端新技术-->
+
+
+    <div class="wrapper d3">
+        <div class="scroll">
+            <div>1999</div>
+            <div>2000</div>
+            <div>2001</div>
+            <div>2002</div>
+            <div>2003</div>
+            <div>2004</div>
+            <div>2005</div>
+            <div>2006</div>
+            <div>2007</div>
+            <div>2008</div>
+            <div>2009</div>
+            <div>2010</div>
+            <div>2011</div>
+            <div>2012</div>
+            <div>2013</div>
+            <div>2014</div>
+            <div>2015</div>
+            <div>2016</div>
+            <div>2017</div>
+            <div>2018</div>
+            <div>2019</div>
+            <div>2020</div>
+        </div>
+    </div>
+
+<script>
+    let str = "100000000000";
+
+    let reg = /(?=(\B)(\d{3})+$)/g;
+
+    console.log(str.replace(reg,($,$1)=>{
+        console.log("匹配：",$,$1);
+        return '.';
+    }));
+
+
+    //正向预查，，正向断言
+
+
+
+    //    \s === [\t\f\n\r\v]
+</script>
+</body>
+</html>
+
+
+
+
