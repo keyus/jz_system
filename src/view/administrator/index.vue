@@ -32,11 +32,13 @@
                         label="姓名"
                     >
                     </el-table-column>
+
                     <el-table-column
-                        prop="nick"
-                        label="昵称"
+                        prop="phone"
+                        label="电话"
                     >
                     </el-table-column>
+
                     <el-table-column
                         prop="auth"
                         :formatter="userType"
@@ -48,7 +50,7 @@
                         prop="handle"
                         label="操作">
                         <template slot-scope="scope">
-                            <el-button type="text" size="small" @click="updateUser">修改</el-button>
+                            <el-button type="text" size="small" @click="openUpdate(scope)">修改</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -57,21 +59,21 @@
             </div>
         </div>
 
-
+        <edit-user :dialog-visible.sync="dialogVisible" :item="currentUpdate" @update-item="updateItem"></edit-user>
     </div>
 </template>
 
 <script>
+    import edit from './edit';
     export default {
+        components: {
+            "edit-user": edit
+        },
         data() {
             return {
-                filter: {},
-                input : '',
-                options : [],
-                value : '',
-                currentPage : 1,
-
                 userList : [],
+                dialogVisible : false,
+                currentUpdate : false,
             }
         },
         created(){
@@ -86,13 +88,12 @@
                 if(type ===1) return '超级管理员';
                 else return '管理员';
             },
-            async updateUser(){
-                let res = await this.$api.updateUser({
-                    password : 'test',
-                    name : '测试',
-                    phone : '15802816160',
-                });
-                console.log(res);
+            openUpdate(item){
+                this.dialogVisible = true;
+                this.currentUpdate = item.row;
+            },
+            updateItem(options){
+
             }
         },
     }
