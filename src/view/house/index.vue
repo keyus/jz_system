@@ -17,74 +17,55 @@
 
                     <div class="fp-filter-text">过滤条件：</div>
                     <div class="fp-filter-item">
-                        <el-input v-model="input" placeholder="业主姓名/房屋地址"></el-input>
+                        <el-input v-model="pagination.keywords" style="width: 260px" placeholder="业主姓名/房屋地址/房屋面积"></el-input>
                     </div>
                     <div class="fp-filter-item">
-                        <el-select v-model="value" placeholder="所在地区">
+                        <el-select v-model="pagination.area_id" placeholder="所在地区">
                             <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
+                                :key="0"
+                                label="全部"
+                                :value="0">
+                            </el-option>
+                            <el-option
+                                v-for="item in areaList"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </div>
+
+                    <div class="fp-filter-item">
+                        <el-select v-model="pagination.company_id" placeholder="装修单位/个人">
+                            <el-option
+                                :key="0"
+                                label="全部"
+                                :value="0">
+                            </el-option>
+                            <el-option
+                                v-for="item in companyList"
+                                :key="item.id"
+                                :label="item.company_name"
+                                :value="item.id">
                             </el-option>
                         </el-select>
                     </div>
                     <div class="fp-filter-item">
-                        <el-select v-model="value" placeholder="房屋面积">
-                            <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </div>
-                    <div class="fp-filter-item">
-                        <el-select v-model="value" placeholder="签约价">
-                            <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </div>
-                    <div class="fp-filter-item">
-                        <el-select v-model="value" placeholder="装修单位/个人">
-                            <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </div>
-                    <div class="fp-filter-item">
-                        <el-button type="primary">搜索</el-button>
+                        <el-button type="primary" @click="init">搜索</el-button>
                     </div>
                 </div>
             </div>
         </div>
 
-
         <div class="card">
             <div class="card-block">
-
-                <el-alert
-                    title="房屋管理栏目提示"
-                    type="info"
-                    description="每一个房屋有只能关联一个公司单位或个人"
-                    show-icon
-                    style="margin-bottom: 15px"
-                >
-                </el-alert>
 
                 <div>
                     <el-button type="primary" plain>添加房屋</el-button>
                 </div>
 
                 <el-table
-                    :data="tableData"
+                    :data="list"
                     style="width: 100%">
                     <el-table-column
                         prop="id"
@@ -95,6 +76,14 @@
                         prop="startDate"
                         label="开工日期"
                         width="100">
+                        <template slot-scope="scope">
+                            <template v-if="scope.row.startDate">
+                                {{scope.row.startDate}}
+                            </template>
+                            <template v-else>
+                                <el-tag type="warning">未开工</el-tag>
+                            </template>
+                        </template>
                     </el-table-column>
 
                     <el-table-column
@@ -103,9 +92,10 @@
                         width="100">
                     </el-table-column>
                     <el-table-column
-                        prop="city"
+                        prop="area_id"
                         width="100"
-                        label="地区">
+                        :formatter="formatArea"
+                        label="所在地">
                     </el-table-column>
                     <el-table-column
                         prop="address"
@@ -121,24 +111,34 @@
                         label="签约价(元)">
                     </el-table-column>
                     <el-table-column
-                        prop="company"
+                        prop="company_id"
+                        :formatter="formatCompany"
                         label="单位/个人">
                     </el-table-column>
                     <el-table-column
-                        prop="progress"
+                        prop="work_rate"
                         width="100"
                         label="工程进度">
                         <template slot-scope="scope">
-                            <el-progress :text-inside="true" :stroke-width="18" :percentage="70"
+                            <el-progress :text-inside="true" :stroke-width="18" :percentage="scope.row.work_rate"
                                          status="success"></el-progress>
                         </template>
                     </el-table-column>
                     <el-table-column
-                        prop="progress"
+                        prop="house_pay_rate"
                         width="100"
                         label="业主付款">
                         <template slot-scope="scope">
-                            <el-progress :text-inside="true" :stroke-width="18" :percentage="70"></el-progress>
+                            <el-progress :text-inside="true" :stroke-width="18" :percentage="scope.row.house_pay_rate"></el-progress>
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column
+                        prop="company_pay_rate"
+                        width="100"
+                        label="公司付款">
+                        <template slot-scope="scope">
+                            <el-progress :text-inside="true" :stroke-width="18" :percentage="scope.row.company_pay_rate"></el-progress>
                         </template>
                     </el-table-column>
 
@@ -148,9 +148,18 @@
                     </el-table-column>
 
                     <el-table-column
-                        prop="endDate"
                         width="100"
                         label="完结日期">
+                        <template slot-scope="scope">
+                            <template v-if="scope.row.end_date">
+                                <el-tooltip class="item" effect="dark" :content="'完工日期：'+scope.row.end_date" placement="top">
+                                    <el-tag type="success">已完工</el-tag>
+                                </el-tooltip>
+                            </template>
+                            <template v-else>
+                                <el-tag type="danger">未完工</el-tag>
+                            </template>
+                        </template>
                     </el-table-column>
 
                     <el-table-column
@@ -177,13 +186,11 @@
 
                 <el-pagination
                     background
-                    @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
-                    :current-page="currentPage"
-                    :page-sizes="[100, 200, 300, 400]"
-                    :page-size="100"
+                    :current-page="pagination.page"
+                    :page-size="pagination.size"
                     layout="total, prev, pager, next"
-                    :total="400">
+                    :total="total">
                 </el-pagination>
             </div>
         </div>
@@ -202,27 +209,54 @@
                 value: '',
                 currentPage: 1,
 
+                total : 0,
+                pagination: {
+                    page : 1,
+                    size : 10,
+                    keywords : '',
+                    area_id: '',
+                    company_id: '',
+                },
 
-                tableData: [{
-                    id: 1,
-                    name: '王学武',
-                    startDate: '2018-12-20',
-                    endDate: '2019-2-20',
-                    city: '仁寿',
-                    address: '仁寿北城时代',
-                    size: '90',
-                    price: '99800',
-                    company: '美家装修公司',
-                    progress: '1阶段',
-                    company_shop_list: '',
-                    stat: '--',
-                }]
+                areaList :[],
+                companyList :[],
+
+                list : []
+
             }
         },
+        created(){
+            this.init();
+        },
         methods: {
-            handleSizeChange() {
-
+            async init(){
+                let list    = await this.$api.houseList(this.pagination);
+                this.list   = list.data.data.rows;
+                this.total  = list.data.data.count;
+                (!this.areaList.length || !this.companyList.length) && this.initAreaAndCompany();
             },
+
+            async initAreaAndCompany(){
+                let [area,company] = await Promise.all([this.$api.areaList(),this.$api.companyList()]);
+                this.areaList = area.data;
+                this.companyList = company.data.data;
+            },
+            formatArea({area_id}){
+                let res =  this.areaList.find(it=>it.id === area_id);
+                if(res){
+                    return res.name;
+                };
+                return '--';
+            },
+
+            formatCompany({company_id}){
+                let res =  this.companyList.find(it=>it.id === company_id);
+                if(res){
+                    return res.company_name;
+                };
+                return '--';
+            },
+
             handleCurrentChange() {
 
             }

@@ -52,7 +52,6 @@
         },
         methods: {
             handleSelect() {
-                console.log([...arguments]);
             }
         }
     }

@@ -25,10 +25,10 @@ class Contact {
             where : {
                 [Op.or] : {
                     name: {
-                        [Op.like]: `${keywords}%`
+                        [Op.like]: `%${keywords}%`
                     },
                     phone: {
-                        [Op.like]: `${keywords}%`
+                        [Op.like]: `%${keywords}%`
                     },
                 },
             }

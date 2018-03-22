@@ -71,14 +71,6 @@
                     </el-table-column>
                 </el-table>
 
-                <el-pagination
-                    background
-                    @current-change="handleCurrentChange"
-                    :current-page="pagination.page"
-                    :page-size="pagination.size"
-                    layout="total, prev, pager, next"
-                    :total="total">
-                </el-pagination>
             </div>
         </div>
 
@@ -99,24 +91,12 @@
         },
         data() {
             return {
-                filter: {},
-                input : '',
-                options : [],
-                value : '',
-                currentPage : 1,
-
                 list :[],
                 visible : false,
                 visibleUpdate : false,
-
-
-                total : 0,
                 pagination: {
-                    page : 1,
-                    size : 10,
                     keywords : ''
-                }
-                ,
+                },
                 currentUpdate: false
             }
         },
@@ -126,8 +106,7 @@
         methods : {
             async init(){
                 let list    = await this.$api.companyList(this.pagination);
-                this.list   = list.data.data.rows;
-                this.total  = list.data.data.count;
+                this.list   = list.data.data;
             },
             openSave(){
                 this.visible = true;
@@ -136,10 +115,7 @@
                 this.visibleUpdate = true;
                 this.currentUpdate = it.row;
             },
-            handleCurrentChange(num){
-                this.pagination.page = num;
-                this.init();
-            },
+
             async deleteItem(it){
                 await this.$confirm('确认删除, 是否继续?', '提示', {
                     confirmButtonText: '确定',

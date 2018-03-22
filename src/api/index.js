@@ -70,3 +70,9 @@ export const companyUpdate = (data) => {
 export const companyDelete = (data) => {
     return axios.post('/company/delete', data);
 }
+
+/**----房屋-----*/
+
+export const houseList = (data) => {
+    return axios.get('/house',{params : data});
+}

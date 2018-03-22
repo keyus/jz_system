@@ -12,19 +12,12 @@ class Company {
     }
 
     async company(ctx) {
-        ctx.request.body = ctx.request.query ? ctx.request.query : {
-            page: 1,
-            size: 10
-        };
-        let {page, size, keywords} = ctx.request.query;
-        size = Number(size);
-        let offset = page === 1 ? 0 : (page-1) * size;
-        let res = await model.findAndCount({
-            offset ,
-            limit: size,
+        let { keywords } = ctx.request.query;
+        keywords = keywords ? keywords : '';
+        let res = await model.all({
             where : {
                 company_name: {
-                    [Op.like]: `${keywords}%`
+                    [Op.like]: `%${keywords}%`
                 },
             }
         });
