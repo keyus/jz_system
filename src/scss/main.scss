@@ -77,3 +77,9 @@
     border: 1px solid #cccccc;
     border-radius: 3px;
 }
+
+.el-table__row{
+    td:first-child{
+        color: #999;
+    }
+}

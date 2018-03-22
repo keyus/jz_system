@@ -11,7 +11,7 @@ class Area {
         }
     }
     async area(ctx){
-        let list = await model.findAll({
+        let list = await model.all({
             order : [
                 ['id','DESC']
             ]

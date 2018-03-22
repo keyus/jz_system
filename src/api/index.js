@@ -8,7 +8,8 @@ export const login = (data) => {
     return axios.post('/login.do', data);
 }
 
-//管理员列表
+/**----管理员-----*/
+
 export const userList = () => {
     return axios.get('/user');
 }
@@ -16,6 +17,8 @@ export const userList = () => {
 export const updateUser = (data) => {
     return axios.post('/user/update',data);
 }
+
+/**----地区-----*/
 
 export const areaList = () => {
     return axios.get('/area');
@@ -30,4 +33,40 @@ export const areaDelete = (id) => {
 }
 export const areaUpdate = (data) => {
     return axios.post('/area/update',data);
+}
+
+/**----联系人-----*/
+
+export const contactList = (data) => {
+    return axios.get('/contact',{params : data});
+}
+
+export const contactSave = (data) => {
+    return axios.post('/contact/save',data);
+}
+
+export const contactUpdate = (data) => {
+    return axios.post('/contact/update',data);
+}
+
+export const contactDelete = (data) => {
+    return axios.post('/contact/delete', data);
+}
+
+/**----公司-----*/
+
+export const companyList = (data) => {
+    return axios.get('/company',{params : data});
+}
+
+export const companySave = (data) => {
+    return axios.post('/company/save',data);
+}
+
+export const companyUpdate = (data) => {
+    return axios.post('/company/update',data);
+}
+
+export const companyDelete = (data) => {
+    return axios.post('/company/delete', data);
 }

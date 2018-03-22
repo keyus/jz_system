@@ -10,7 +10,7 @@ class User {
     }
 
     async user(ctx) {
-        let user = await model.findAll({
+        let user = await model.all({
             attributes: ['id', 'user', 'nick', 'phone', 'name']
         });
         ctx.body = user;

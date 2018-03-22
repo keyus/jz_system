@@ -8,17 +8,26 @@
                     <el-breadcrumb-item :to="{ path: '/' }">控制台</el-breadcrumb-item>
                     <el-breadcrumb-item>联系人维护</el-breadcrumb-item>
                 </el-breadcrumb>
+                <div class="fp-filter">
 
+                    <div class="fp-filter-text">过滤条件：</div>
+                    <div class="fp-filter-item">
+                        <el-input v-model="pagination.keywords" placeholder="姓名/电话"></el-input>
+                    </div>
 
+                    <div class="fp-filter-item">
+                        <el-button type="primary" @click="init">搜索</el-button>
+                    </div>
+                </div>
             </div>
         </div>
 
 
         <div class="card">
             <div class="card-block">
-                <div > <el-button type="primary" plain>新增联系人</el-button></div>
+                <div > <el-button type="primary" plain @click="openSave">新增联系人</el-button></div>
                 <el-table
-                    :data="tableData"
+                    :data="list"
                     style="width: 100%">
                     <el-table-column
                         prop="id"
@@ -27,19 +36,17 @@
                     </el-table-column>
                     <el-table-column
                         prop="name"
-
-
                         label="姓名"
                         >
                     </el-table-column>
                     <el-table-column
-                        prop="type"
+                        prop="phone"
                         label="电话"
                     >
                     </el-table-column>
                     <el-table-column
-                        prop="phone"
-                        label="电话"
+                        prop="work_type"
+                        label="类型"
                     >
                     </el-table-column>
                     <el-table-column
@@ -52,31 +59,38 @@
                         prop="handle"
                         label="操作">
                         <template slot-scope="scope">
-                            <el-button type="text" size="small">修改</el-button>
-                            <el-button type="text" size="small">删除</el-button>
+                            <el-button type="text" size="small" @click="openUpdate(scope)">修改</el-button>
+                            <el-button type="text" size="small" @click="deleteItem(scope)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
 
                 <el-pagination
                     background
-                    @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
-                    :current-page="currentPage"
-                    :page-sizes="[100, 200, 300, 400]"
-                    :page-size="100"
+                    :current-page="pagination.page"
+                    :page-size="pagination.size"
                     layout="total, prev, pager, next"
-                    :total="400">
+                    :total="total">
                 </el-pagination>
             </div>
         </div>
 
+        <!--保存-->
+        <contact-save :visible.sync="visible" @init="init"></contact-save>
+        <contact-update :visible-update.sync="visibleUpdate" :current-update="currentUpdate" @init="init"></contact-update>
 
     </div>
 </template>
 
 <script>
+    import save from './save'
+    import update from './update'
     export default {
+        components : {
+            'contact-save': save,
+            'contact-update': update,
+        },
         data() {
             return {
                 filter: {},
@@ -85,23 +99,50 @@
                 value : '',
                 currentPage : 1,
 
+                list :[],
+                visible : false,
+                visibleUpdate : false,
 
-                tableData: [{
-                    id: 1,
-                    name: '李三',
-                    type: '木工',
-                    phone: '15802815150',
-                    note: '',
-                    stat: '--',
-                }]
+
+                total : 0,
+                pagination: {
+                    page : 1,
+                    size : 10,
+                    keywords : ''
+                }
+                ,
+                currentUpdate: false
             }
         },
+        created () {
+            this.init();
+        },
         methods : {
-            handleSizeChange (){
-
+            async init(){
+                let list    = await this.$api.contactList(this.pagination);
+                this.list   = list.data.data.rows;
+                this.total  = list.data.data.count;
             },
-            handleCurrentChange(){
-
+            openSave(){
+                this.visible = true;
+            },
+            openUpdate(it){
+                this.visibleUpdate = true;
+                this.currentUpdate = it.row;
+            },
+            handleCurrentChange(num){
+                this.pagination.page = num;
+                this.init();
+            },
+            async deleteItem(it){
+                await this.$confirm('确认删除, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                });
+                const id = it.row.id;
+                await this.$api.contactDelete({id});
+                this.list.splice(it.$index, 1);
             }
         }
     }
